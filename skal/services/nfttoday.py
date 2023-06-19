@@ -1,5 +1,7 @@
 import requests
 
+from skal.utils.response import envia_request
+
 JWT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3YWxsZXQiOiIweDJENDBmZjkzZjA3NThlRjc4QTE3M2NjNzU1MTE4YTY3MWVhOGQwOTQiLCJpYXQiOjE2ODcxOTk1ODEsImV4cCI6MTY4NzI0Mjc4MX0.HHSTgJNIkJwHqCsRua76db_yzzcqwbTzWi9QmYjNdkw'
 
 class MintNftPolygonService:
@@ -16,20 +18,53 @@ class MintNftPolygonService:
         }
         self.wallet = "0x2D40ff93f0758eF78A173cc755118a671ea8d094"
 
+    def fazer_upload_assets(self):
+        try:
+            data = {
+                "wallet": self.wallet,
+                "sessionName": "",
+                "csv": "",
+                "assets": "",
+                "preview": ""
+            }
+            url = f'{self.url_0xmint}/v2/batch/uploadAssets'
+            response = envia_request(url=url, metodo='post', headers=self.headers, data=data)
+            # Retorna a SessionID
+            return response.text
+        except Exception as e:
+            e
     
-    def create_event(self):
-        data = {
-            "wallet": self.wallet,
-            "eventId": "08a6e226-4fa2-4fe5-aa3d-fc39c17a2720",
-            "personalDetails": "My Event Teste",
-        }
-        url = requests.post(f'{self.url_mint_nft}/user/create', headers=self.headers, data=data)
-        return url
+    def fazer_deploy_ou_update_contrato(self):
+        try:
+            url = f'{self.url_0xmint}/v2/batch/updateCollectionData'
+            data = {'sessionId': '','wallet': self.wallet}
+            response = envia_request(url=url, metodo='post', headers=self.headers, data=data)
+            return response.text
+        except Exception as e:
+            ...
+
+    def pegar_status(self, sessionID):
+        try:
+            url = f'{self.url_0xmint}/v2/batch/checkStatus/${sessionID}'
+            response = envia_request(url=url, metodo='get', headers=self.headers)
+            return response.text
+        except Exception as e:
+            ...
+
+    def depositar_gas(self, sessionID):
+        try:
+            url = f'{self.url_0xmint}/v2/batch/getEstimatedGas/${sessionID}'
+            response = envia_request(url=url, metodo='get', headers=self.headers)
+            return response.text
+        except Exception as e:
+            ...
     
-    def get_user_status(self):
-        url = requests.get(f'{self.url_mint_nft}/user/scan/0x2D40ff93f0758eF78A173cc755118a671ea8d094/08a6e226-4fa2-4fe5-aa3d-fc39c17a2720', headers=self.headers, data={})
-        return url
-    
+    def mintar_NFT(self):
+        ...
+
+    def pegar_detalhes_do_mint(self):
+        ...
+        
     def refresh_jwt_0xmint(self):
         payload = {
             "wallet": self.wallet,
@@ -37,17 +72,6 @@ class MintNftPolygonService:
         url = f'{self.url_0xmint}/v2/refreshJWT'
         response = requests.post(url, headers=self.headers_refresh, data=payload)
         return response
-    
-    def mint_batch_nft(self):
-        url = f'{self.url_0xmint}/v2/batch/uploadAssets'
-        response = requests.post(url, headers=self.headers, data={})
-        return response
-    
-    def get_bath_collections(self):
-        url = f'{self.url_0xmint}/v2/batch/collection/${self.wallet}'
-        response = requests.get(url, headers=self.headers)
-        return response
-    
 
 # response = MintNftPolygonService().mint()
 status = MintNftPolygonService().get_bath_collections()
