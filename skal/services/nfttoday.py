@@ -1,22 +1,21 @@
 import requests
-
+import os
 from skal.utils.response import envia_request
 
-JWT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3YWxsZXQiOiIweDJENDBmZjkzZjA3NThlRjc4QTE3M2NjNzU1MTE4YTY3MWVhOGQwOTQiLCJpYXQiOjE2ODcxOTk1ODEsImV4cCI6MTY4NzI0Mjc4MX0.HHSTgJNIkJwHqCsRua76db_yzzcqwbTzWi9QmYjNdkw'
 
 class MintNftPolygonService:
     def __init__(self) -> None:
         self.url_mint_nft = f'https://ticketing.0xmint.io/api/ticket'
         self.url_0xmint = f'https://api.0xmint.io'
         self.headers_refresh = {
-            "x-api-key": "3fd89e0e-8ce0-434e-8b91-34b18cdb1735",
-            "x-refresh-token": "1d259010924c30f8f0c070d5669e71890906402940e3a8d6009d8d096de5a489"
+            "x-api-key": os.environ.get('X_API_KEY'),
+            "x-refresh-token": os.environ.get('X_REFRESH_TOKEN')
         }
         self.headers = {
-            "x-api-key": "3fd89e0e-8ce0-434e-8b91-34b18cdb1735",
-            "x-auth-token": JWT_TOKEN
+            "x-api-key": os.environ.get('X_API_KEY'),
+            "x-auth-token": os.environ.get('JWT_TOKEN')
         }
-        self.wallet = "0x2D40ff93f0758eF78A173cc755118a671ea8d094"
+        self.wallet = os.environ.get('WALLET')
 
     def fazer_upload_assets(self):
         try:
@@ -64,7 +63,7 @@ class MintNftPolygonService:
 
     def pegar_detalhes_do_mint(self):
         ...
-        
+
     def refresh_jwt_0xmint(self):
         payload = {
             "wallet": self.wallet,
@@ -74,4 +73,4 @@ class MintNftPolygonService:
         return response
 
 # response = MintNftPolygonService().mint()
-status = MintNftPolygonService().get_bath_collections()
+status = MintNftPolygonService().fazer_deploy_ou_update_contrato()
